@@ -1,24 +1,35 @@
 package com.carrefour.kata.infrastructure.persistence;
 
-import com.carrefour.kata.application.port.out.OrderRepository;
 import com.carrefour.kata.domain.model.CustomerOrder;
 import com.carrefour.kata.domain.model.OrderItem;
 import com.carrefour.kata.domain.model.OrderStatus;
-import org.springframework.stereotype.Repository;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
-@Repository
-public class InMemoryOrderRepository implements OrderRepository {
+@Component
+class DemoDataInitializer implements ApplicationRunner {
     private static final String DEMO_CUSTOMER = "customer-1";
-    private final List<CustomerOrder> orders;
+    private final SpringDataOrderRepository orders;
 
-    public InMemoryOrderRepository() {
+    DemoDataInitializer(SpringDataOrderRepository orders) {
+        this.orders = orders;
+    }
+
+    @Override
+    @Transactional
+    public void run(ApplicationArguments args) {
+        if (orders.count() > 0) {
+            return;
+        }
+
         LocalDate today = LocalDate.now();
-        orders = List.of(
+        List<CustomerOrder> demoOrders = List.of(
                 new CustomerOrder("CMD-2026-003", DEMO_CUSTOMER, today.minusDays(8), today.minusDays(4),
                         OrderStatus.DELIVERED, List.of(
                         new OrderItem("item-31", "Cafetière filtre", 1, new BigDecimal("39.90")),
@@ -37,18 +48,7 @@ public class InMemoryOrderRepository implements OrderRepository {
                         new OrderItem("item-41", "Bouilloire électrique", 1, new BigDecimal("29.90"))
                 ))
         );
-    }
 
-    @Override
-    public List<CustomerOrder> findByCustomerId(String customerId) {
-        return orders.stream().filter(order -> order.customerId().equals(customerId)).toList();
-    }
-
-    @Override
-    public Optional<CustomerOrder> findByIdAndCustomerId(String orderId, String customerId) {
-        return orders.stream()
-                .filter(order -> order.id().equals(orderId) && order.customerId().equals(customerId))
-                .findFirst();
+        orders.saveAll(demoOrders.stream().map(OrderEntity::fromDomain).toList());
     }
 }
-

@@ -57,7 +57,19 @@ infrastructure  contrôleurs REST, configuration et dépôts en mémoire
 
 Les dépendances pointent vers le cœur : les services applicatifs connaissent uniquement les interfaces de dépôts. Spring assemble les implémentations dans `ApplicationConfiguration`.
 
-Le stockage en mémoire est un choix adapté au temps du kata. Les commandes sont réinitialisées à chaque redémarrage, les images ne sont pas conservées et seules leurs métadonnées sont enregistrées. En production, les ports permettraient de remplacer ces adaptateurs par une base de données et un stockage objet sans modifier les règles métier.
+Les commandes et demandes de remboursement sont persistées dans une base H2 locale via
+Spring Data JPA. Le fichier est créé sous `backend/data/` et les données de démonstration
+sont insérées uniquement lorsque la base est vide. Les images elles-mêmes ne sont pas
+conservées : seules leurs métadonnées sont enregistrées.
+
+La console H2 est disponible sur `http://localhost:8080/h2-console` avec :
+
+- JDBC URL : `jdbc:h2:file:./data/refunddb`
+- utilisateur : `sa`
+- mot de passe : vide
+
+Les ports du cœur applicatif isolent toujours la persistance : H2 pourrait être remplacée
+par PostgreSQL sans modifier les règles métier.
 
 ## API
 
@@ -79,7 +91,7 @@ Répond `201 Created` avec la demande créée. Une règle métier non satisfaite
 ## Limites et suite possible
 
 - authentification réelle et autorisations ;
-- persistance SQL et stockage sécurisé des images ;
+- migrations de schéma avec Flyway et stockage sécurisé des images ;
 - analyse antivirus et vérification du contenu réel du fichier ;
 - consultation et traitement du statut d'une demande ;
 - tests d'intégration de l'API et tests de composants Vue ;
