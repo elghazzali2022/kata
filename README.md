@@ -4,13 +4,14 @@ Ce projet couvre le MVP demandé : un client consulte l'historique de ses comman
 
 ## Démarrage
 
-Prérequis : JDK 25, Maven 3.6.3+ et Node.js 20+.
+Prérequis : JDK 25 et Node.js 20+. Maven n'a pas besoin d'être installé :
+le Maven Wrapper inclus dans le dépôt le télécharge automatiquement.
 
 Dans deux terminaux :
 
 ```bash
 cd backend
-mvn spring-boot:run
+.\mvnw.cmd spring-boot:run
 ```
 
 ```bash
@@ -24,7 +25,9 @@ L'interface est disponible sur `http://localhost:5173`. Vite relaie les appels `
 Tests et build :
 
 ```bash
-cd backend && mvn test
+cd backend
+.\mvnw.cmd test
+
 cd frontend && npm run build
 ```
 
@@ -81,4 +84,3 @@ Répond `201 Created` avec la demande créée. Une règle métier non satisfaite
 - consultation et traitement du statut d'une demande ;
 - tests d'intégration de l'API et tests de composants Vue ;
 - accessibilité complète du dialogue (focus trap et retour du focus).
-
