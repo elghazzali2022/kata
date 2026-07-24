@@ -1,0 +1,16 @@
+# Backend
+target/
+data/
+*.log
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# IntelliJ
+.idea/
+*.iml
+
+# Système
+.DS_Store
+Thumbs.db
